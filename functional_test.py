@@ -16,7 +16,7 @@ class NewVisitorTest(unittest.TestCase):
 
         #查看首頁-標題跟標頭為'陳廷比價網'
         self.browser.get('http://localhost:8000')
-        self.assertIn('陳廷比價網', self.browser.title)
+        self.assertIn('Tim parity web', self.browser.title)
         #進入登入頁面點擊註冊並註冊(先不須認證)
 
         #自動回到登入頁面登入
@@ -24,7 +24,6 @@ class NewVisitorTest(unittest.TestCase):
         #使用搜尋抓取比價商品資料
 
         #待續.......
-        print('測試成功')
 
 
 if __name__ == '__main__':
