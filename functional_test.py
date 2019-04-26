@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from time import sleep
 import unittest
 import sys
@@ -14,10 +15,13 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
 
-        #查看首頁-標題跟標頭為'陳廷比價網'
+        #查看首頁-標題跟標頭為'Tim parity web'
         self.browser.get('http://localhost:8000')
         self.assertIn('Tim parity web', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('Tim parity web', header_text)
         #進入登入頁面點擊註冊並註冊(先不須認證)
+        login_button = self.browser.find_element_by_id('id_new_item')
 
         #自動回到登入頁面登入
 
