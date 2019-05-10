@@ -12,7 +12,7 @@
 					</div>
 					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
 						<form class="form-inline" style="margin-top:5%;">
-							<input class="form-control mr-sm-2" type="text" /> 
+							<input class="form-control mr-sm-2" type="text" />
 								<button class="btn btn-primary my-2 my-sm-0" type="submit">
 									搜尋
 								</button>
@@ -26,7 +26,7 @@
 								</li>
 							</ul>
 						</div>
-					</div>	
+					</div>
 				</nav>
 			</div>
 			<div class="row">
@@ -50,7 +50,11 @@
 				<div class="col-md-9">
 					<div class="row">
 						<div class="col-md-12">
-							不關保旅地不、市他他下把年為種。要心以；理通爸河快作科。吸就險作制等什都……可生機交及先，據他收要人只？股個特最們師下的平得乎意人參指上的為國量停漸小合大然一是的願！入媽不點照別關影該一續國，的子術！校是觀子黃定案靜想。的果人讓我管裡從而來外者國。
+							{% for good in goods %}
+							<a href="{{good.hyperlink}}">{{good.name}}</a>
+							<div class="float-right">price: {{good.price}}</div>
+							<br>
+							{% endfor %}
 						</div>
 					</div>
 				</div>
