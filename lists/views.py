@@ -89,8 +89,38 @@ def reptile_rakuten(search_text=''):
 
     return rakuten_goods
 
+def reptile_etmall(search_text=''):
+
+    url = 'https://www.etmall.com.tw/Search/Get'
+    post_data = {
+        'keyword':search_text,
+        'model[cateName]':'全站',
+        'model[page]':0,
+        'model[storeID]':'',
+        'model[cateID]':'-1',
+        'model[filterType]':'',
+        'model[sortType]':'',
+        'model[moneyMaximum]':'',
+        'model[moneyMinimum]':'',
+        'model[pageSize]':40,
+        'page':0,
+    }
+
+    etmall_data = requests.post(url, data=post_data)
+
+    etmall_goods = json.loads(etmall_data.text)['searchResult']['products']
+    goods_list = []
+    for good in etmall_goods:
+        goods_list.append({
+            'name': good['title'],
+            'hyperlink': 'https://www.etmall.com.tw/'+good['purchaseLink'],
+            'price': good['finalPrice']
+        })
+    return goods_list
+
+
 
 def home_page(request):
-    goods = reptile_rakuten('google')
+    goods = reptile_etmall('msi 電競筆電')
 
     return render(request, 'home.html', {'goods': goods})
