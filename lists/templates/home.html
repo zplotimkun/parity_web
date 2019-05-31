@@ -11,11 +11,20 @@
 						<a class="navbar-brand" href="#" style="margin-top:5%;">陳廷比價網</a>
 					</div>
 					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
-						<form class="form-inline" style="margin-top:5%;">
-							<input class="form-control mr-sm-2" type="text" />
-								<button class="btn btn-primary my-2 my-sm-0" type="submit">
-									搜尋
-								</button>
+						<form class="form-inline" method="POST" style="margin-top:0%;">
+							<div>
+								<input class="form-control mr-sm-2" name="search_text" placeholder="請輸入關鍵字" type="text" />
+								{% csrf_token %}
+									<button class="btn btn-primary my-2 my-sm-0" type="submit">
+										搜尋
+									</button>
+							</div>
+							<div>
+								金額範圍:
+								<input class="col-md-3" name="min_pric" type="number">
+								~
+								<input class="col-md-3" name="max_pric" type="number">
+							</div>
 						</form>
 					</div>
 					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
