@@ -5,8 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from lxml import etree
 
+from django.db import connection
 from lists.models import Goods
-
 
 def crawler_pchome(search_text, min_pric, max_pric):
     '''
@@ -49,7 +49,7 @@ def crawler_pchome(search_text, min_pric, max_pric):
     for good in pchome_goods:
         goods_list.append({
             'name': good['name'],
-            'hyperlink': 'https://24h.pchome.com.tw/prod/'+good['Id'],
+            'link': 'https://24h.pchome.com.tw/prod/'+good['Id'],
             'price': good['price']
         })
 
@@ -82,7 +82,7 @@ def crawler_rakuten(search_text, min_pric, max_pric):
         text_price = [str(text) for text in takecon_price][0]
         text_link = [str(text) for text in takecon_hyperlink][0]
         rakuten_dict['name'] = text_good
-        rakuten_dict['hyperlink'] = 'https://www.rakuten.com.tw/' + text_link
+        rakuten_dict['link'] = 'https://www.rakuten.com.tw/' + text_link
         rakuten_dict['price'] = text_price
         rakuten_goods.append(rakuten_dict)
 
@@ -107,31 +107,45 @@ def crawler_etmall(search_text, min_pric, max_pric):
     etmall_data = requests.post(url, data=post_data)
 
     etmall_goods = json.loads(etmall_data.text)['searchResult']['products']
-    print(min_pric, max_pric)
     goods_list = []
     for good in etmall_goods:
         goods_list.append({
             'name': good['title'],
-            'hyperlink': 'https://www.etmall.com.tw/'+good['purchaseLink'],
+            'link': 'https://www.etmall.com.tw/'+good['purchaseLink'],
             'price': good['finalPrice']
         })
     return goods_list
 
 def crawlers_array(search_text='', min_pric=0, max_pric=999999):
-    all_goods = []
-    pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
-    rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
-    etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
+    search_history = Goods.objects.filter(
+        keyword=search_text,
+        price__gte=min_pric,
+        price__lte=max_pric
+        ).order_by("price")
+    print("Before:{}".format(len(search_history)))
+    if (not search_history.exists()) or len(search_history) < 20:
+        all_goods = []
+        pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
+        rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
+        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
     
-    all_goods.extend(pchome_goods)
-    all_goods.extend(rakuten_goods)
-    all_goods.extend(etmall_goods)
+        all_goods.extend(pchome_goods)
+        all_goods.extend(rakuten_goods)
+        all_goods.extend(etmall_goods)
 
-    for goods in all_goods:
-        Goods.objects.create(name=goods['name'], price=goods['price'], link=goods['hyperlink'], keyword=search_text)
+        for goods in all_goods:
+            if Goods.objects.filter(link=goods['link']).exists():
+                continue
+            Goods.objects.create(name=goods['name'], price=goods['price'], link=goods['link'], keyword=search_text)
     
-    
+    goods_array = Goods.objects.filter(
+        keyword=search_text,
+        price__gte=min_pric,
+        price__lte=max_pric
+        ).order_by("price")
+    print("After:{}".format(len(goods_array)))
+    print(min_pric, max_pric)
     
 
 
-    return all_goods
+    return goods_array
