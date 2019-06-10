@@ -10,6 +10,7 @@ class Goods(models.Model):
     price = models.PositiveIntegerField()
     link = models.TextField()
     keyword = models.CharField(max_length=20, default='')
+    store = models.CharField(max_length=20, default = '')
 
     def __str__(self):
         return self.name

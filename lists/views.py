@@ -19,12 +19,14 @@ def home_page(request):
         get_search = request.POST.get('search_text', '')
         min_pric = request.POST.get('min_pric', '')
         max_pric = request.POST.get('max_pric', '')
+        check_store = request.POST.getlist('checkstore')
         if min_pric == '':
             min_pric = 0
         if max_pric == '':
-            max_pric = 9999999
+            max_pric = 999999
+        print(check_store, get_search, min_pric, max_pric)
         if get_search != '':
-            goods = crawlers.crawlers_array(get_search, min_pric, max_pric)
+            goods = crawlers.crawlers_array(check_store, get_search, min_pric, max_pric)
         else:
             return render(request, 'home.html', {})
 

@@ -4,14 +4,14 @@
 		<title>Tim parity web</title>
 	</head>
 	<body>
-		<div class="container-fluid">
-			<div class="row">
-				<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width:100%;height:100">
-					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
-						<a class="navbar-brand" href="#" style="margin-top:5%;">陳廷比價網</a>
-					</div>
-					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
-						<form class="form-inline" method="POST" style="margin-top:0%;">
+		<form class="form-inline" method="POST" style="margin-top:0%;">
+			<div class="container-fluid">
+				<div class="row">
+					<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width:100%;height:100">
+						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
+							<a class="navbar-brand" href="#" style="margin-top:5%;">陳廷比價網</a>
+						</div>
+						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
 							<div>
 								<input class="form-control mr-sm-2" name="search_text" placeholder="請輸入關鍵字" type="text" />
 								{% csrf_token %}
@@ -25,49 +25,47 @@
 								~
 								<input class="col-md-3" name="max_pric" type="number">
 							</div>
-						</form>
-					</div>
-					<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
-						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="margin-top:5%;">
-							<ul class="navbar-nav ml-md-auto">
-								<li class="nav-item active" style="">
-									<a class="nav-link" href="#">登入 <span class="sr-only">(current)</span></a>
-								</li>
-							</ul>
 						</div>
-					</div>
-				</nav>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					<div class="row">
-						<div class="col-md-12">
-							代投都統，男我外半門早，是地當線學者，那總山次，表名綠情身得響在幾孩是成中品請可人國用！示定時麼子大：非表訴公收，西園了大分大來活、一把候常在希大型你，前主氣生空備老究能還我家東香歌元分花走聽；分不人力人但當。多景備經帶夜，月辦一是緊好來個縣中家子示北找權良兒機小會戰條。
+						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
+							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="margin-top:5%;">
+								<ul class="navbar-nav ml-md-auto">
+									<li class="nav-item active" style="">
+										<a class="nav-link" href="#">登入 <span class="sr-only">(current)</span></a>
+									</li>
+								</ul>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12"><br>
-							功打他有不今？在備哥其影心，前動的者自千他加那不亞。天近子海主好來安事推之成益我先。家力大畫金氣部轉他花方人，康少對的才思座想論隨時機是成用以；陸了不它醫？目地想不時預興息具用。來排機苦變神地就酒司賽實，立日的來自陸推表著兒出取常速打？
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12"><br>
-							兒國吸近記備新化有那溫全告百望保他正多，發在S。安天的司意長整後是口相張；果我話，層入及王，義家是建談；用場支計減子就平樂濟辦續理呢是了；你面學平友性務各眾臺可見止裡工有客直藝差無羅溫地優萬何生只生家第得作益作者營北的創打事來遊黃果少！
-						</div>
-					</div>
+					</nav>
 				</div>
-				<div class="col-md-9">
-					<div class="row">
-						<div class="col-md-12">
-							{% for good in goods %}
-							<a href="{{good.link}}">{{good.name}}</a>
-							<div class="float-right">price: {{good.price}}</div>
-							<br>
-							{% endfor %}
+				<div class="row">
+					<div class="col-md-3">
+						<div class="row">
+							<div class="col-md-12">
+								{% csrf_token %}
+								<input type="checkbox" name="checkstore" value="pchome" checked> PChome<br>
+								<input type="checkbox" name="checkstore" value="rakuten" checked> 樂天購物<br>
+								<input type="checkbox" name="checkstore" value="etmall" checked> 東森購物<br>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12"><br>
+								兒國吸近記備新化有那溫全告百望保他正多，發在S。安天的司意長整後是口相張；果我話，層入及王，義家是建談；用場支計減子就平樂濟辦續理呢是了；你面學平友性務各眾臺可見止裡工有客直藝差無羅溫地優萬何生只生家第得作益作者營北的創打事來遊黃果少！
+							</div>
+						</div>
+					</div>
+					<div class="col-md-9">
+						<div class="row">
+							<div class="col-md-12">
+								{% for good in goods %}
+								<a href="{{good.link}}">{{good.name}}</a>
+								<div class="float-right">price: {{good.price}}</div>
+								<br>
+								{% endfor %}
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 	</body>
 </html>

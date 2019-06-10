@@ -49,8 +49,9 @@ def crawler_pchome(search_text, min_pric, max_pric):
     for good in pchome_goods:
         goods_list.append({
             'name': good['name'],
-            'link': 'https://24h.pchome.com.tw/prod/'+good['Id'],
-            'price': good['price']
+            'link': 'https://24h.pchome.com.tw/prod/{}'.format(good['Id']),
+            'price': good['price'],
+            'store': 'pchome'
         })
 
     return goods_list
@@ -84,6 +85,7 @@ def crawler_rakuten(search_text, min_pric, max_pric):
         rakuten_dict['name'] = text_good
         rakuten_dict['link'] = 'https://www.rakuten.com.tw/' + text_link
         rakuten_dict['price'] = text_price
+        rakuten_dict['store'] = 'rakuten'
         rakuten_goods.append(rakuten_dict)
 
     return rakuten_goods
@@ -112,11 +114,13 @@ def crawler_etmall(search_text, min_pric, max_pric):
         goods_list.append({
             'name': good['title'],
             'link': 'https://www.etmall.com.tw/'+good['purchaseLink'],
-            'price': good['finalPrice']
+            'price': good['finalPrice'],
+            'store': 'etmall'
         })
     return goods_list
 
-def crawlers_array(search_text='', min_pric=0, max_pric=999999):
+def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
+    print(check_store[0])
     search_history = Goods.objects.filter(
         keyword=search_text,
         price__gte=min_pric,
@@ -126,26 +130,24 @@ def crawlers_array(search_text='', min_pric=0, max_pric=999999):
     if (not search_history.exists()) or len(search_history) < 20:
         all_goods = []
         pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
-        rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
-        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
-    
         all_goods.extend(pchome_goods)
+        rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
         all_goods.extend(rakuten_goods)
+        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
         all_goods.extend(etmall_goods)
 
         for goods in all_goods:
-            if Goods.objects.filter(link=goods['link']).exists():
+            if Goods.objects.filter(link=goods['link'], keyword=search_text).exists():
                 continue
-            Goods.objects.create(name=goods['name'], price=goods['price'], link=goods['link'], keyword=search_text)
-    
+            Goods.objects.create(name=goods['name'], price=goods['price'], link=goods['link'], keyword=search_text, store=goods['store'])
     goods_array = Goods.objects.filter(
         keyword=search_text,
+        store__in=check_store,
         price__gte=min_pric,
         price__lte=max_pric
         ).order_by("price")
+
     print("After:{}".format(len(goods_array)))
     print(min_pric, max_pric)
-    
-
 
     return goods_array
