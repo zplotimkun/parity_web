@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<html>
+    <body>
+        <form>
+            <div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;margin:0 auto;">
+                <div id='title' stytle='font-size:1.2cm;'>
+                    <span style="font-size:50px;font-weight:bold;margin:0 auto;">login</span>
+                </div>
+                <div>
+                    <br>帳號：
+                    <input class="form-control mr-sm-2" name="account" placeholder="Mail or username" type="text" />
+                </div>
+                <div>
+                    <br>密碼：
+                    <input class="form-control mr-sm-2" name="password" placeholder="Password" type="text" />
+                </div>
+                <div>
+                    <br>
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">
+                    {% csrf_token %}
+                        登入
+                    </button>
+                </div>
+            </div>
+        </form>
+    </bodt>
+</html>

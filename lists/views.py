@@ -31,3 +31,10 @@ def home_page(request):
             return render(request, 'home.html', {})
 
     return render(request, 'home.html', {'goods': goods})
+
+def auth_page(request):
+    if request.method == 'POST':
+        user_account = request.POST.get('account', '')
+        user_password = request.POST.get('password', '')
+        print(user_account, user_password)
+    return render(request, 'auth.html', {})
