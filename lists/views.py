@@ -9,6 +9,7 @@ from lxml import etree
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.contrib.sessions.models import Session
 
 from lists.models import Goods
 from lists.models import User
@@ -17,6 +18,8 @@ import lists.crawlers as crawlers
 
 def home_page(request):
     goods = []
+    search_history = []
+    user_pk = request.session.get('account')
     if request.method == 'POST':
         get_search = request.POST.get('search_text', '')
         min_pric = request.POST.get('min_pric', '')
@@ -26,23 +29,34 @@ def home_page(request):
             min_pric = 0
         if max_pric == '':
             max_pric = 999999
-        print(check_store, get_search, min_pric, max_pric)
         if get_search != '':
             goods = crawlers.crawlers_array(check_store, get_search, min_pric, max_pric)
-        else:
-            return render(request, 'home.html', {})
-
-    return render(request, 'home.html', {'goods': goods})
+            if user_pk:
+                user = User.objects.get(pk=user_pk)
+                crawlers.save_history(user, get_search)
+    if user_pk:
+        user = User.objects.get(pk=user_pk)
+        search_history = crawlers.take_history(user)
+    return render(request, 'home.html', {'goods':goods, 'histories':search_history})
 
 def auth_page(request):
+    request.session['account'] = None
     if request.method == 'POST':
         user_account = request.POST.get('account', '')
+        if not user_account or not request.POST.get('password', ''):
+            account_pass = False
+            return render(request, 'auth.html', {'account_pass':account_pass})
         user_data = auth.login(user_account)
-        if bcrypt.checkpw(request.POST.get('password', '').encode('UTF-8'), user_data.password.encode('UTF-8')):
-            print('登入成功')
-            return redirect('http://127.0.0.1:8000')
+        if user_data:
+            account_pass = bcrypt.checkpw(request.POST.get('password', '').encode('UTF-8'), user_data.password.encode('UTF-8'))
+            if account_pass:
+                request.session['account'] = user_data.pk
+                return redirect('http://127.0.0.1:8000')
+            else:
+                return render(request, 'auth.html', {'account_pass':account_pass})
         else:
-            print('登入失敗')
+            account_pass = False
+            return render(request, 'auth.html', {'account_pass':account_pass})
     return render(request, 'auth.html', {})
 
 
@@ -53,11 +67,10 @@ def register_page(request):
         user_password = bcrypt.hashpw(request.POST.get('password', '').encode('UTF-8'), bcrypt.gensalt(14))
         #此段加密
         if not user_name or not user_mail or not user_password:
-            print('缺資料失敗')
-            return render(request, 'register.html', {})
+            account_complete = False
+            return render(request, 'register.html', {'complete':account_complete})
         else:
             account_save = auth.register(user_name, user_mail, user_password)
-            print(account_save)
             return redirect('http://127.0.0.1:8000/auth/')
 
     return render(request, 'register.html', {})

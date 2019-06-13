@@ -8,10 +8,10 @@
 			<div class="container-fluid">
 				<div class="row">
 					<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width:100%;height:100">
-						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
+						<div class="col-md-4" style="width:25%;height:100%;background-color:#00DDDD;">
 							<a class="navbar-brand" href="#" style="margin-top:5%;">陳廷比價網</a>
 						</div>
-						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
+						<div class="col-md-4" style="width:25%;height:100%;background-color:#00DDDD;">
 							<div>
 								<input class="form-control mr-sm-2" name="search_text" placeholder="請輸入關鍵字" type="text" />
 								{% csrf_token %}
@@ -26,12 +26,21 @@
 								<input class="col-md-3" name="max_pric" type="number">
 							</div>
 						</div>
-						<div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;">
+						<div class="col-md-4" style="width:50%;height:100%;background-color:#00DDDD;">
 							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="margin-top:5%;">
 								<ul class="navbar-nav ml-md-auto">
-									<li class="nav-item active" style="">
-										<a class="nav-link" href="http://127.0.0.1:8000/auth">登入 <span class="sr-only">(current)</span></a>
-									</li>
+									{% if request.session.account %}
+										<li>
+											{{ request.session.account }}
+										</li>
+										<li class="nav-item active">
+											<a class="nav-link" href="http://127.0.0.1:8000/auth">登出<span class="sr-only">(current)</span></a>
+										</li>
+									{% else %}
+										<li class="nav-item active">
+											<a class="nav-link" href="http://127.0.0.1:8000/auth">登入<span class="sr-only">(current)</span></a>
+										</li>
+									{% endif %}
 								</ul>
 							</div>
 						</div>
@@ -49,7 +58,10 @@
 						</div>
 						<div class="row">
 							<div class="col-md-12"><br>
-								兒國吸近記備新化有那溫全告百望保他正多，發在S。安天的司意長整後是口相張；果我話，層入及王，義家是建談；用場支計減子就平樂濟辦續理呢是了；你面學平友性務各眾臺可見止裡工有客直藝差無羅溫地優萬何生只生家第得作益作者營北的創打事來遊黃果少！
+								搜尋紀錄：<br>
+								{% for history in histories %}
+								<a>{{history}}</a><br>
+								{% endfor %}
 							</div>
 						</div>
 					</div>

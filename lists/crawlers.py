@@ -7,6 +7,24 @@ from lxml import etree
 
 from django.db import connection
 from lists.models import Goods
+from lists.models import User
+from lists.models import History
+
+def save_history(user, search_text):
+    History.objects.create(user=user, keyword=search_text)
+
+def take_history(user):
+    search_history = History.objects.filter(user=user).order_by('-pk').values_list('keyword', flat=True)
+    top3_search = []
+    for history in search_history:
+        if len(top3_search) <= 3:
+            if len(top3_search) == 0:
+                top3_search.append(history)
+            else:
+                if history not in top3_search:
+                    top3_search.append(history)
+
+    return top3_search
 
 def crawler_pchome(search_text, min_pric, max_pric):
     '''
@@ -120,13 +138,11 @@ def crawler_etmall(search_text, min_pric, max_pric):
     return goods_list
 
 def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
-    print(check_store[0])
     search_history = Goods.objects.filter(
         keyword=search_text,
         price__gte=min_pric,
         price__lte=max_pric
         ).order_by("price")
-    print("Before:{}".format(len(search_history)))
     if (not search_history.exists()) or len(search_history) < 20:
         all_goods = []
         pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
@@ -139,15 +155,21 @@ def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
         for goods in all_goods:
             if Goods.objects.filter(link=goods['link'], keyword=search_text).exists():
                 continue
-            Goods.objects.create(name=goods['name'], price=goods['price'], link=goods['link'], keyword=search_text, store=goods['store'])
+            try:
+                Goods.objects.create(
+                    name=goods['name'],
+                    price=goods['price'],
+                    link=goods['link'],
+                    keyword=search_text,
+                    store=goods['store']
+                )
+            except Exception as e:
+                print(f"Create object {goods} raise error: {e}")
     goods_array = Goods.objects.filter(
         keyword=search_text,
         store__in=check_store,
         price__gte=min_pric,
         price__lte=max_pric
         ).order_by("price")
-
-    print("After:{}".format(len(goods_array)))
-    print(min_pric, max_pric)
 
     return goods_array

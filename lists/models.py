@@ -21,8 +21,16 @@ class Goods(models.Model):
 class User(models.Model):
     username = models.CharField(max_length=20)
     mail = models.CharField(max_length=50)
-    password = models.CharField(max_length=20)
+    password = models.CharField(max_length=100)
     register_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.username
+
+class History(models.Model):
+    user = models.ForeignKey(User)
+    keyword = models.CharField(max_length=20)
+    register_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "History"

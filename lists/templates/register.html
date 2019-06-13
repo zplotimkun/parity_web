@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>註冊啦</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://cdn.staticfile.org/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
     </head>
     <body>
         <form method="POST" style="margin-top:0%;">
+            {% csrf_token %}
             <div class="col-md-4" style="width:33%;height:100%;background-color:#00DDDD;margin:0 auto;">
                 <div class="row justify-content-center" stytle='font-size:1.2cm;margin:0 auto;'>
                     <span style="font-size:50px;font-weight:bold;">Register</span>
@@ -25,38 +27,16 @@
                 </div>
                 <div>
                     <br>
-                    <a href="http://127.0.0.1:8000/auth/">
-                        <button class="btn btn-primary my-2 my-sm-0" type="submit">
-                        {% csrf_token %}
-                            註冊
-                        </button>
-                    </a>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                        Launch demo modal
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">
+                        註冊
                     </button>
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    ...
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </form>
+        <script type="text/javascript">
+            {% if complete == False %}
+                alert("資料不完整，名稱、信箱重複,或信箱不符合格式");
+            {% endif %}
+        </script>
     </body>
 </html>
