@@ -20,6 +20,7 @@ def home_page(request):
     goods = []
     search_history = []
     user_pk = request.session.get('account')
+    user = []
     if request.method == 'POST':
         get_search = request.POST.get('search_text', '')
         min_pric = request.POST.get('min_pric', '')
@@ -37,7 +38,7 @@ def home_page(request):
     if user_pk:
         user = User.objects.get(pk=user_pk)
         search_history = crawlers.take_history(user)
-    return render(request, 'home.html', {'goods':goods, 'histories':search_history})
+    return render(request, 'home.html', {'goods':goods, 'histories':search_history, 'user':user})
 
 def auth_page(request):
     request.session['account'] = None
