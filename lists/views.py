@@ -4,15 +4,12 @@ import requests
 import bcrypt
 
 from bs4 import BeautifulSoup
-from lxml import etree
 
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 from django.contrib.sessions.models import Session
 
-from lists.models import Goods
-from lists.models import User
+from lists.models import Goods, User
 import lists.auth as auth
 import lists.crawlers as crawlers
 
@@ -52,7 +49,7 @@ def auth_page(request):
             account_pass = bcrypt.checkpw(request.POST.get('password', '').encode('UTF-8'), user_data.password.encode('UTF-8'))
             if account_pass:
                 request.session['account'] = user_data.pk
-                return redirect('http://127.0.0.1:8000')
+                return redirect('home')
             else:
                 return render(request, 'auth.html', {'account_pass':account_pass})
         else:
@@ -71,7 +68,7 @@ def register_page(request):
             account_complete = False
             return render(request, 'register.html', {'complete':account_complete})
         else:
-            account_save = auth.register(user_name, user_mail, user_password)
-            return redirect('http://127.0.0.1:8000/auth/')
+            auth.register(user_name, user_mail, user_password)
+            return redirect('auth')
 
     return render(request, 'register.html', {})

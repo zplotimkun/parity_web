@@ -5,10 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from lxml import etree
 
-from django.db import connection
-from lists.models import Goods
-from lists.models import User
-from lists.models import History
+from lists.models import Goods, User, History
 
 def save_history(user, search_text):
     History.objects.create(user=user, keyword=search_text)

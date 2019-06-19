@@ -1,8 +1,11 @@
 from django.test import TestCase
-from django.core.urlresolvers import resolve
+from django.conf import settings
 from django.http import HttpRequest
+from django.core.urlresolvers import resolve
+from django.utils.importlib import import_module
+from django.template.loader import render_to_string
+
 from lists.views import home_page
-from lists.models import Item
 
 # Create your tests here.
 
