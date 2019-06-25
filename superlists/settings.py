@@ -82,10 +82,10 @@ WSGI_APPLICATION = 'superlists.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
-        'USER': 'root',
+        'NAME': 'paritydb',
+        'USER': 'zplotimkun',
         'PASSWORD': env('DATABASE_PASSWORD', default=''),
-        'HOST':'127.0.0.1',
+        'HOST':'parityweb.chcuespcbgsg.ap-northeast-1.rds.amazonaws.com',
         'PORT':'3306'
     }
 }
