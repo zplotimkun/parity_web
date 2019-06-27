@@ -4,6 +4,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from lxml import etree
+from urllib.request import urlopen
 
 from lists.models import Goods, User, History
 
@@ -75,32 +76,26 @@ def crawler_rakuten(search_text, min_pric, max_pric):
     rakuten_goods = []
     
     url = 'https://www.rakuten.com.tw/search/{search_text}/?minp={min_pric}&maxp={max_pric}&s=2&v=l&l-id=tw_search_list'.format(search_text=search_text, min_pric=min_pric, max_pric=max_pric)
-    res = requests.get(url)
-    selector = etree.HTML(res.text)
+    html = requests.get(url)
+    soup = BeautifulSoup(html.text, features='lxml')
+    good_name = soup.find_all('a', {"class":"product-name"})
+    good_price = soup.find_all('span', {"class":"b-text-prime"})
         
-    for i in range(1, 20):
+    for i in range(len(good_name)):
         rakuten_dict = {}
-        xpath_good = '//*[@id="contents"]/div[2]/div[2]/div[5]/div/ul/li[{}]/div/div[2]/div[1]/div[1]/b/a/text()'.format(i)
-        xpath_hyperlink = '//*[@id="contents"]/div[2]/div[2]/div[5]/div/ul/li[{}]/div/div[2]/div[1]/div[1]/b/a/@href'.format(i)
-        xpath_price = '//*[@id="contents"]/div[2]/div[2]/div[5]/div/ul/li[{}]/div/div[2]/div[2]/div[1]/div/a/div/b/span/text()'.format(i)
-        takecon_good = selector.xpath(xpath_good)
-        takecon_price = selector.xpath(xpath_price)
-        
-        if takecon_good == []:
-            xpath_good = '//*[@id="contents"]/div[2]/div[2]/div[5]/div/ul/li[{}]/div/div[2]/div[1]/div[2]/b/a/text()'.format(i)
-            takecon_good = selector.xpath(xpath_good)
-            xpath_hyperlink = '//*[@id="contents"]/div[2]/div[2]/div[5]/div/ul/li[{}]/div/div[2]/div[1]/div[2]/b/a/@href'.format(i)
-            if takecon_good == []:
-                continue
-        takecon_hyperlink = selector.xpath(xpath_hyperlink)
-            
-        text_good = [str(text) for text in takecon_good][0]
-        text_price = [str(text) for text in takecon_price][0]
-        text_link = [str(text) for text in takecon_hyperlink][0]
-        rakuten_dict['name'] = text_good
-        rakuten_dict['link'] = 'https://www.rakuten.com.tw/' + text_link
-        rakuten_dict['price'] = text_price
+        take_name = re.findall('>(.*)<', str(good_name[i]))
+        take_link = re.findall('href=\"\S+\"', str(good_name[i]))
+        link = re.findall('\/\S+\/', str(take_link))
+        take_price = re.findall('>(([0-9]*,)?([0-9]+))', str(good_price[i]))[0][0]
+        price = take_price.split(',')
+        if len(price) == 2:
+            rakuten_dict['price'] = '{}{}'.format(price[0],price[1])
+        else:
+            rakuten_dict['price'] = '{}'.format(take_price)
+        rakuten_dict['name'] = take_name[0]
+        rakuten_dict['link'] = 'https://www.rakuten.com.tw{}'.format(link[0])
         rakuten_dict['store'] = 'rakuten'
+
         rakuten_goods.append(rakuten_dict)
 
     return rakuten_goods
@@ -146,8 +141,8 @@ def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
         all_goods.extend(pchome_goods)
         rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
         all_goods.extend(rakuten_goods)
-        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
-        all_goods.extend(etmall_goods)
+        # etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
+        # all_goods.extend(etmall_goods)
 
         for goods in all_goods:
             if Goods.objects.filter(link=goods['link'], keyword=search_text).exists():
