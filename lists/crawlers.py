@@ -8,9 +8,6 @@ from urllib.request import urlopen
 
 from lists.models import Goods, User, History
 
-def save_history(user, search_text):
-    History.objects.create(user=user, keyword=search_text)
-
 def take_history(user):
     search_history = History.objects.filter(user=user).order_by('-pk').values_list('keyword', flat=True)
     top3_search = []
@@ -121,12 +118,13 @@ def crawler_etmall(search_text, min_pric, max_pric):
     etmall_goods = json.loads(etmall_data.text)['searchResult']['products']
     goods_list = []
     for good in etmall_goods:
-        goods_list.append({
-            'name': good['title'],
-            'link': 'https://www.etmall.com.tw/'+good['purchaseLink'],
-            'price': good['finalPrice'],
-            'store': 'etmall'
-        })
+        etmall_dict = {}
+        etmall_dict['name'] = good['title']
+        etmall_dict['link'] = 'https://www.etmall.com.tw/'+good['purchaseLink']
+        etmall_dict['price'] = good['finalPrice']
+        etmall_dict['store'] = 'etmall'
+
+        goods_list.append(etmall_dict)
     return goods_list
 
 def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
@@ -137,12 +135,12 @@ def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
         ).order_by("price")
     if (not search_history.exists()) or len(search_history) < 20:
         all_goods = []
+        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
+        all_goods.extend(etmall_goods)
         pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
         all_goods.extend(pchome_goods)
         rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
         all_goods.extend(rakuten_goods)
-        # etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
-        # all_goods.extend(etmall_goods)
 
         for goods in all_goods:
             if Goods.objects.filter(link=goods['link'], keyword=search_text).exists():

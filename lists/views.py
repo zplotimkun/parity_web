@@ -31,7 +31,7 @@ def home_page(request):
             goods = crawlers.crawlers_array(check_store, get_search, min_pric, max_pric)
             if user_pk:
                 user = User.objects.get(pk=user_pk)
-                crawlers.save_history(user, get_search)
+                History.objects.create(user=user, keyword=search_text)
     if user_pk:
         user = User.objects.get(pk=user_pk)
         search_history = crawlers.take_history(user)
