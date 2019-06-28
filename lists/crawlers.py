@@ -1,12 +1,20 @@
 import re
 import json
 import requests
+import time
 
 from bs4 import BeautifulSoup
 from lxml import etree
 from urllib.request import urlopen
 
 from lists.models import Goods, User, History
+
+def get_tor_session():
+    session = requests.session()
+    # Tor uses the 9050 port as the default socks port
+    session.proxies = {'http':  'socks5://127.0.0.1:9050',
+                       'https': 'socks5://127.0.0.1:9050'}
+    return session
 
 def take_history(user):
     search_history = History.objects.filter(user=user).order_by('-pk').values_list('keyword', flat=True)
@@ -112,8 +120,9 @@ def crawler_etmall(search_text, min_pric, max_pric):
         'model[pageSize]':40,
         'page':0,
     }
+    session = get_tor_session()
 
-    etmall_data = requests.post(url, data=post_data)
+    etmall_data = session.post(url, data=post_data)
 
     etmall_goods = json.loads(etmall_data.text)['searchResult']['products']
     goods_list = []
