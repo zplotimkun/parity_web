@@ -1,0 +1,17 @@
+[Unit]
+Description=Gunicorn server for timpirty.com
+After=network.target
+Wants=network.target
+
+
+
+[Service]
+User=zplotimkun
+WorkingDirectory=/home/zplotimkun/sites/timparity.com/source
+ExecStart=/bin/bash -c "/home/zplotimkun/sites/timparity.com/venv/bin/gunicorn --bind unix:/tmp/timparity.com.socket superlists.wsgi:applicat$
+PrivateTmp=false
+
+
+[Install]
+WantedBy=multi-user.target
+
