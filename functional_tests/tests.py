@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
 
 from time import sleep
-from unittest import mock 
+from unittest import mock
 
 class NewVisitorTest(LiveServerTestCase):
 

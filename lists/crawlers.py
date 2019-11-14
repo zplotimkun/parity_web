@@ -120,8 +120,8 @@ def crawler_etmall(search_text, min_pric, max_pric):
         'model[pageSize]':40,
         'page':0,
     }
-    session = get_tor_session()
-
+    # session = get_tor_session()
+    session = requests.Session()
     etmall_data = session.post(url, data=post_data)
 
     etmall_goods = json.loads(etmall_data.text)['searchResult']['products']
@@ -144,8 +144,8 @@ def crawlers_array(check_store, search_text='', min_pric=0, max_pric=999999):
         ).order_by("price")
     if (not search_history.exists()) or len(search_history) < 20:
         all_goods = []
-        etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
-        all_goods.extend(etmall_goods)
+        # etmall_goods = crawler_etmall(search_text, min_pric, max_pric)
+        # all_goods.extend(etmall_goods)
         pchome_goods = crawler_pchome(search_text, min_pric, max_pric)
         all_goods.extend(pchome_goods)
         rakuten_goods = crawler_rakuten(search_text, min_pric, max_pric)
