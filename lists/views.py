@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.sessions.models import Session
 
-from lists.models import Goods, User
+from lists.models import Goods, User, History
 import lists.auth as auth
 import lists.crawlers as crawlers
 
@@ -31,7 +31,7 @@ def home_page(request):
             goods = crawlers.crawlers_array(check_store, get_search, min_pric, max_pric)
             if user_pk:
                 user = User.objects.get(pk=user_pk)
-                History.objects.create(user=user, keyword=search_text)
+                History.objects.create(user=user, keyword=get_search)
     if user_pk:
         user = User.objects.get(pk=user_pk)
         search_history = crawlers.take_history(user)
